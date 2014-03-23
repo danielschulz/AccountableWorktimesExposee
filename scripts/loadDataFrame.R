@@ -67,24 +67,33 @@ for (i in 1:length(rawData$vorgang)) {
   }
 }
 
-rawData = subset(rawData, !rawData$isKum)
+
+# data
+data = subset(rawData, !rawData$isKum)
+
+data$weekday = weekdays(as.Date(data$date, DATE_FORMAT))
+data$day   =   format(as.Date(data$date, DATE_FORMAT), "%d")
+data$month =   format(as.Date(data$date, DATE_FORMAT), "%m")
+data$year  =   format(as.Date(data$date, DATE_FORMAT), "%Y")
+
 
 
 # kum
 
 kum = data.frame(
-  weekday = weekdays(as.Date(subset(rawData, rawData$isKum)$date, format=DATE_FORMAT)),
-  fragPause = subset(rawData, rawData$isKum)$fragPause,
-  fragActual = subset(rawData, rawData$isKum)$fragActual)
+  weekday = weekdays(as.Date(subset(data, data$isKum)$date, format=DATE_FORMAT)),
+  fragPause =  subset(data, data$isKum)$fragPause,
+  fragActual = subset(data, data$isKum)$fragActual)
 
 
 # accounts
 accounts = data.frame(
-  vorgang = unique(rawData$vorgang),
+  vorgang = unique(data$vorgang),
   actual = NA)
 
 for (i in 1:length(accounts$vorgang)) {
-  accounts[i,]$actual = sum(na.omit(subset(rawData, accounts[i,]$vorgang == rawData$vorgang)$fragActual))
+  accounts[i,]$actual = sum(na.omit(subset(
+    data, accounts[i,]$vorgang == data$vorgang)$fragActual))
 }
 
 
@@ -92,8 +101,8 @@ accounts$rank = dim(accounts)[1] - rank(accounts$actual, ties.method="max") + 1
 
 
 
-rawUniqueDates = unique(rawData$date)
+rawUniqueDates = unique(data$date)
 uniqueDates = rawUniqueDates[!rawUniqueDates %in% DATES_TO_IGNORE]
 
-regExpVorgang = regexpr(VORGANG_PATTERN, rawData$vorgang)
-regExpDate = regexpr(DATE_PATTERN, rawData$date)
+regExpVorgang = regexpr(VORGANG_PATTERN, data$vorgang)
+regExpDate =    regexpr(DATE_PATTERN,    data$date)
