@@ -29,7 +29,7 @@ PERSISTENT_CONSTANTS = c("PERSISTENT_CONSTANTS")
 # INIT DATA
 
 # load trainings data: data
-dataLocation = "..\\inputs\\worktimes-example.txt"
+dataLocation = "..\\inputs\\worktimes.txt"
 
 rawData = read.csv2(dataLocation, header=FALSE, encoding="ANSI", sep="\t", 
                     strip.white=TRUE, na.strings=c("?"))
@@ -43,6 +43,7 @@ names(rawData) = c("date", "weekday", "nominal", "timespan", "fragPause", "fragA
 rawData$nominal = as.numeric(rawData$nominal)
 rawData$fragPause = as.numeric(rawData$fragPause)
 rawData$fragActual = as.numeric(rawData$fragActual)
+rawData$isKum = DATE_KUM_ROW == rawData$date
 
 
 curDate = NA
@@ -50,24 +51,46 @@ curNominal = NA
 curWeekday = NA
 
 
-# MAPS: dates, weekdays, kum, baustein, vorgang
-datesMap = list()
-weekdaysMap = list()
-kumMap = list()
-bausteinMap = list()
-vorgangMap = list()
+# targets: dates, weekdays, kum, baustein, vorgang
 
 for (i in 1:length(rawData$vorgang)) {
   
   if (TRUE == regexpr(DATE_PATTERN, rawData[i,]$date)) {
     curDate = as.Date(rawData[i,]$date, format=DATE_FORMAT)
-    curNominal = rawData$nominal
-    curWeekday = rawData$weekday
-  
-  } else if (rawData[i,]$date == DATE_KUM_ROW) {
-    kumMap[[paste0(curDate, "")]] = rawData[i,]$fragActual
+    curNominal = rawData[i,]$nominal
+    curWeekday = rawData[i,]$weekday
+      
+  } else {
+    rawData[i,]$date = format(curDate, DATE_FORMAT)
+    rawData[i,]$nominal = curNominal
+    rawData[i,]$weekday = curWeekday
   }
 }
+
+rawData = subset(rawData, !rawData$isKum)
+
+
+# kum
+
+kum = data.frame(
+  weekday = weekdays(as.Date(subset(rawData, rawData$isKum)$date, format=DATE_FORMAT)),
+  fragPause = subset(rawData, rawData$isKum)$fragPause,
+  fragActual = subset(rawData, rawData$isKum)$fragActual)
+
+
+# accounts
+accounts = data.frame(
+  vorgang = unique(rawData$vorgang),
+  actual = NA)
+
+for (i in 1:length(accounts$vorgang)) {
+  accounts[i,]$actual = sum(na.omit(subset(rawData, accounts[i,]$vorgang == rawData$vorgang)$fragActual))
+}
+
+
+accounts$rank = dim(accounts)[1] - rank(accounts$actual, ties.method="max") + 1
+
+
 
 rawUniqueDates = unique(rawData$date)
 uniqueDates = rawUniqueDates[!rawUniqueDates %in% DATES_TO_IGNORE]
