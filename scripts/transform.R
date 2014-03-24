@@ -39,8 +39,34 @@ rawData$recreation = "Flex-Time" == rawData$baustein |
   "Unbezahlter Urlaub" == rawData$baustein
 rawData$holiday = "Urlaub" == rawData$baustein
 
+rawData$isIntern = NA
+
 rawData$intermediateProxy = NA
 rawData$benefitingCustomer = NA
+
+rawData$isIntern = "43013" == rawData$vorgangNoFst | "47632" == rawData$vorgangNoFst | "52681" == rawData$vorgangNoFst | 
+  "51450" == rawData$vorgangNoFst | "58120" == rawData$vorgangNoFst
+
+rawData$benefitingCustomer[which(
+                "46495" == rawData$vorgangNoFst | "49810" == rawData$vorgangNoFst | "52087" == rawData$vorgangNoFst)] = "HRS"
+
+rawData$benefitingCustomer[which(
+                "52604" == rawData$vorgangNoFst | "48504" == rawData$vorgangNoFst | "50760" == rawData$vorgangNoFst | 
+                "53878" == rawData$vorgangNoFst | "55877" == rawData$vorgangNoFst | "54795" == rawData$vorgangNoFst |
+                "57294" == rawData$vorgangNoFst | "58028" == rawData$vorgangNoFst | "57727" == rawData$vorgangNoFst)] = "Audi"
+
+rawData$benefitingCustomer[which(
+                      "54011" == rawData$vorgangNoFst | "48504" == rawData$vorgangNoFst | 
+                      "50760" == rawData$vorgangNoFst)] = "Daimler"
+
+rawData$intermediateProxy[which(
+                      "52604" == rawData$vorgangNoFst | "48504" == rawData$vorgangNoFst | "50760" == rawData$vorgangNoFst | 
+                      "53878" == rawData$vorgangNoFst | "55877" == rawData$vorgangNoFst | "54795" == rawData$vorgangNoFst |
+                      "57294" == rawData$vorgangNoFst | "58028" == rawData$vorgangNoFst | "57727" == rawData$vorgangNoFst |
+                      "54011" == rawData$vorgangNoFst | "48504" == rawData$vorgangNoFst | 
+                      "50760" == rawData$vorgangNoFst)] = "GB A"
+
+# View(subset(data, data$vorgangNoFst == "51450"))
 
 rawData$isWorkDay = 0 < rawData$nominal
 
