@@ -38,3 +38,11 @@ paste0("YOI vs. ALL: ", round(h_yoi / h_all, 3))
 # accounts
 quantile(accounts$actual, probs = seq(0, 1, 0.1))
 hist(accounts$actual)
+
+
+# holidays
+printHolidayDays(dim(subset(data, data$holiday & data$year == 2011))[1], 2011)
+printHolidayDays(dim(subset(data, data$holiday & data$year == 2012))[1], 2012)
+printHolidayDays(dim(subset(data, data$holiday & data$year == 2013))[1], 2013)
+printHolidayDays(dim(subset(data, data$holiday & data$year == 2014))[1], 2014)
+

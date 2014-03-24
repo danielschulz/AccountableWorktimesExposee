@@ -3,6 +3,8 @@ curDate = NA
 curNominal = NA
 curWeekday = NA
 
+rawData$vorgangNo = NA
+rawData$vorgangNoFst = NA
 
 # targets: dates, weekdays, kum, baustein, vorgang
 
@@ -18,6 +20,11 @@ for (i in 1:length(rawData$vorgang)) {
     rawData[i,]$nominal = curNominal
     rawData[i,]$weekday = curWeekday
   }
+  
+  if (TRUE == regexpr(VORGANG_PATTERN, rawData[i,]$vorgang)) {
+    rawData[i,]$vorgangNo = gsub(VORGANG_PATTERN, "\\1", rawData[i,]$vorgang)
+    rawData[i,]$vorgangNoFst = gsub("(\\d+).*", "\\1", rawData[i,]$vorgang)
+  }
 }
 
 
@@ -25,6 +32,15 @@ rawData$weekday = weekdays(as.Date(rawData$date, DATE_FORMAT))
 rawData$day   =   format(as.Date(rawData$date, DATE_FORMAT), "%d")
 rawData$month =   format(as.Date(rawData$date, DATE_FORMAT), "%m")
 rawData$year  =   format(as.Date(rawData$date, DATE_FORMAT), "%Y")
+
+rawData$learning = "Ausbildung - intern" == rawData$baustein | 
+  "Ausbildung - extern" == rawData$baustein
+rawData$recreation = "Flex-Time" == rawData$baustein | 
+  "Unbezahlter Urlaub" == rawData$baustein
+rawData$holiday = "Urlaub" == rawData$baustein
+
+rawData$intermediateProxy = NA
+rawData$benefitingCustomer = NA
 
 rawData$isWorkDay = 0 < rawData$nominal
 
@@ -71,11 +87,3 @@ for (i in 1:length(accounts$vorgang)) {
 
 
 accounts$rank = dim(accounts)[1] - rank(accounts$actual, ties.method="max") + 1
-
-
-
-rawUniqueDates = unique(data$date)
-uniqueDates = rawUniqueDates[!rawUniqueDates %in% DATES_TO_IGNORE]
-
-regExpVorgang = regexpr(VORGANG_PATTERN, data$vorgang)
-regExpDate =    regexpr(DATE_PATTERN,    data$date)
