@@ -91,7 +91,7 @@ sum(subset(doi, !is.na(doi$fragActual) & is.na(doi$benefitingCustomer) & is.na(d
 
 # View(subset(doi, !is.na(doi$fragActual) & 0 < doi$fragActual & is.na(doi$benefitingCustomer) & "Urlaub" != doi$baustein))
 
-print("Other work overview")
+# print("Other work overview")
 # View(subset(doi, (is.na(doi$benefitingCustomer) & is.na(doi$investmentFor) & "Urlaub" != doi$baustein) & 0 < doi$nominal))
 
 print("Sum of investments")

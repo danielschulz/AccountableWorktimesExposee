@@ -64,6 +64,11 @@ isHrsVorgangNoFst = function (vorgangNoFst) {
   "46495" == vorgangNoFst | "49810" == vorgangNoFst | "52087" == vorgangNoFst
 }
 
+isInvestment = function (vorgangNo) {
+  "52681.1.3" == vorgangNo | "52681.3.4" == vorgangNo | "52681.17" == vorgangNo | 
+    "52681.4.3" == vorgangNo | "52681.5.1" == vorgangNo
+}
+
 
 
 rawData$isIntern = isInternVorgangNoFst(rawData$vorgangNoFst)
@@ -75,8 +80,12 @@ rawData$intermediateProxy[which(isAudiVorgangNoFst(rawData$vorgangNoFst) | isDai
 
 
 rawData$investmentFor[which("47632.4.2" == rawData$vorgangNo)] = "Other"
-rawData$investmentFor[which(TRUE == regexpr("(Vorbereitung )?HRS.Termin", rawData$description) | "Einarbeitung eRFP-Projekt" == rawData$description)] = "HRS"
-rawData$investmentFor[which("52681.4.3" == rawData$vorgangNo | "52604.1" == rawData$vorgangNo | "52681.4.3" == rawData$vorgangNo)] = "Audi"
+rawData$investmentFor[which(isInvestment(rawData$vorgangNo))] = "GB L"
+
+rawData$investmentFor[which(TRUE == regexpr("(Vorbereitung )?HRS.Termin", rawData$description) | 
+                              "Einarbeitung eRFP-Projekt" == rawData$description)] = "HRS"
+rawData$investmentFor[which("52681.4.3" == rawData$vorgangNo | "52604.1" == rawData$vorgangNo | 
+                              "52681.4.3" == rawData$vorgangNo)] = "Audi"
 
 
 # View(subset(data, data$vorgangNoFst == "51450"))
