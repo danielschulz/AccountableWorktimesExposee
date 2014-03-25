@@ -39,6 +39,8 @@ rawData$recreation = "Flex-Time" == rawData$baustein |
   "Unbezahlter Urlaub" == rawData$baustein
 rawData$holiday = "Urlaub" == rawData$baustein
 
+
+rawData$investmentFor = NA
 rawData$isIntern = NA
 
 rawData$intermediateProxy = NA
@@ -56,15 +58,19 @@ rawData$benefitingCustomer[which(
                 "57294" == rawData$vorgangNoFst | "58028" == rawData$vorgangNoFst | "57727" == rawData$vorgangNoFst)] = "Audi"
 
 rawData$benefitingCustomer[which(
-                      "54011" == rawData$vorgangNoFst | "48504" == rawData$vorgangNoFst | 
-                      "50760" == rawData$vorgangNoFst)] = "Daimler"
+                      "54011" == rawData$vorgangNoFst)] = "Daimler"
 
 rawData$intermediateProxy[which(
                       "52604" == rawData$vorgangNoFst | "48504" == rawData$vorgangNoFst | "50760" == rawData$vorgangNoFst | 
                       "53878" == rawData$vorgangNoFst | "55877" == rawData$vorgangNoFst | "54795" == rawData$vorgangNoFst |
                       "57294" == rawData$vorgangNoFst | "58028" == rawData$vorgangNoFst | "57727" == rawData$vorgangNoFst |
-                      "54011" == rawData$vorgangNoFst | "48504" == rawData$vorgangNoFst | 
-                      "50760" == rawData$vorgangNoFst)] = "GB A"
+                      "54011" == rawData$vorgangNoFst)] = "GB A"
+
+
+rawData$investmentFor[which("47632.4.2" == rawData$vorgangNo)] = "Other"
+rawData$investmentFor[which(TRUE == regexpr("(Vorbereitung )?HRS.Termin", rawData$description) | "Einarbeitung eRFP-Projekt" == rawData$description)] = "HRS"
+rawData$investmentFor[which("52681.4.3" == rawData$vorgangNo | "52604.1" == rawData$vorgangNo | "52681.4.3" == rawData$vorgangNo)] = "Audi"
+
 
 # View(subset(data, data$vorgangNoFst == "51450"))
 

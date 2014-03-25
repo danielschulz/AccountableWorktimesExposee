@@ -28,5 +28,5 @@ PERSISTENT_CONSTANTS = c("PERSISTENT_CONSTANTS")
 
 # FUNCTIONS
 printHolidayDays = function(days, year) {
-  paste0(paste0(days, " days holiday in "), year)
+  print(paste0(paste0(days, " days holiday in "), year))
 }
