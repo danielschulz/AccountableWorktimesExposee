@@ -46,25 +46,32 @@ rawData$isIntern = NA
 rawData$intermediateProxy = NA
 rawData$benefitingCustomer = NA
 
-rawData$isIntern = "43013" == rawData$vorgangNoFst | "47632" == rawData$vorgangNoFst | "52681" == rawData$vorgangNoFst | 
-  "51450" == rawData$vorgangNoFst | "58120" == rawData$vorgangNoFst
 
-rawData$benefitingCustomer[which(
-                "46495" == rawData$vorgangNoFst | "49810" == rawData$vorgangNoFst | "52087" == rawData$vorgangNoFst)] = "HRS"
+isInternVorgangNoFst = function (vorgangNoFst) {
+  "43013" == vorgangNoFst | "47632" == vorgangNoFst | "52681" == vorgangNoFst | "51450" == vorgangNoFst | "58120" == vorgangNoFst
+}
 
-rawData$benefitingCustomer[which(
-                "52604" == rawData$vorgangNoFst | "48504" == rawData$vorgangNoFst | "50760" == rawData$vorgangNoFst | 
-                "53878" == rawData$vorgangNoFst | "55877" == rawData$vorgangNoFst | "54795" == rawData$vorgangNoFst |
-                "57294" == rawData$vorgangNoFst | "58028" == rawData$vorgangNoFst | "57727" == rawData$vorgangNoFst)] = "Audi"
+isAudiVorgangNoFst = function (vorgangNoFst) {
+  "48504" == vorgangNoFst | "50760" == vorgangNoFst | "53878" == vorgangNoFst | "55877" == vorgangNoFst | "54795" == vorgangNoFst | 
+    "57294" == vorgangNoFst | "58028" == vorgangNoFst | "57727" == vorgangNoFst | "52604" == vorgangNoFst
+}
 
-rawData$benefitingCustomer[which(
-                      "54011" == rawData$vorgangNoFst)] = "Daimler"
+isDaimlerVorgangNoFst = function (vorgangNoFst) {
+  "54011" == vorgangNoFst
+}
 
-rawData$intermediateProxy[which(
-                      "52604" == rawData$vorgangNoFst | "48504" == rawData$vorgangNoFst | "50760" == rawData$vorgangNoFst | 
-                      "53878" == rawData$vorgangNoFst | "55877" == rawData$vorgangNoFst | "54795" == rawData$vorgangNoFst |
-                      "57294" == rawData$vorgangNoFst | "58028" == rawData$vorgangNoFst | "57727" == rawData$vorgangNoFst |
-                      "54011" == rawData$vorgangNoFst)] = "GB A"
+isHrsVorgangNoFst = function (vorgangNoFst) {
+  "46495" == vorgangNoFst | "49810" == vorgangNoFst | "52087" == vorgangNoFst
+}
+
+
+
+rawData$isIntern = isInternVorgangNoFst(rawData$vorgangNoFst)
+
+rawData$benefitingCustomer[which(isHrsVorgangNoFst(rawData$vorgangNoFst))] = "HRS"
+rawData$benefitingCustomer[which(isAudiVorgangNoFst(rawData$vorgangNoFst))] = "Audi"
+rawData$benefitingCustomer[which(isDaimlerVorgangNoFst(rawData$vorgangNoFst))] = "Daimler"
+rawData$intermediateProxy[which(isAudiVorgangNoFst(rawData$vorgangNoFst) | isDaimlerVorgangNoFst(rawData$vorgangNoFst))] = "GB A"
 
 
 rawData$investmentFor[which("47632.4.2" == rawData$vorgangNo)] = "Other"
@@ -109,13 +116,19 @@ rm(list=c("rawData"))
 
 # accounts
 accounts = data.frame(
-  vorgang = unique(data$vorgang),
-  actual = NA)
+  vorgangNoFst = unique(doi$vorgangNoFst),
+  actual = NA,
+  customer = NA)
 
-for (i in 1:length(accounts$vorgang)) {
+for (i in 1:length(accounts$vorgangNoFst)) {
   accounts[i,]$actual = sum(na.omit(subset(
-    data, accounts[i,]$vorgang == data$vorgang)$fragActual))
+    doi, accounts[i,]$vorgangNoFst == doi$vorgangNoFst)$fragActual))
 }
+
+accounts$customer[which(isAudiVorgangNoFst(accounts$vorgangNoFst))] =     "Audi"
+accounts$customer[which(isDaimlerVorgangNoFst(accounts$vorgangNoFst))] =  "Daimler"
+accounts$customer[which(isHrsVorgangNoFst(accounts$vorgangNoFst))] =      "HRS"
+accounts$customer[which(isInternVorgangNoFst(accounts$vorgangNoFst))] =   "GB L"
 
 
 accounts$rank = dim(accounts)[1] - rank(accounts$actual, ties.method="max") + 1
