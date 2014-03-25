@@ -1,5 +1,8 @@
 inputs/worktimes.txt
 .Rproj.user
+
+# History files
+.Rhistory
 AccountableWorktimesExposee/.RData
 AccountableWorktimesExposee/.Rhistory
 AccountableWorktimesExposee/AccountableWorktimesExposee.Rproj
