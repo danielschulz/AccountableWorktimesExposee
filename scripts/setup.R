@@ -14,7 +14,9 @@ DATE_KUM_ROW = "kum:"
 DATES_TO_IGNORE = c(DATE_KUM_ROW, ">>>>")
 
 # install.packages("stringr")
+# install.packages("taRifx")
 library("stringr")
+library(taRifx)
 
 
 # clean

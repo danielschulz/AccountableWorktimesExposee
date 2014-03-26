@@ -6,6 +6,11 @@ curWeekday = NA
 rawData$vorgangNo = NA
 rawData$vorgangNoFst = NA
 
+getVorgangNoFst = function (vorgang) {
+  gsub("(\\d+).*", "\\1", vorgang)
+}
+
+
 # targets: dates, weekdays, kum, baustein, vorgang
 
 for (i in 1:length(rawData$vorgang)) {
@@ -23,7 +28,7 @@ for (i in 1:length(rawData$vorgang)) {
   
   if (TRUE == regexpr(VORGANG_PATTERN, rawData[i,]$vorgang)) {
     rawData[i,]$vorgangNo = gsub(VORGANG_PATTERN, "\\1", rawData[i,]$vorgang)
-    rawData[i,]$vorgangNoFst = gsub("(\\d+).*", "\\1", rawData[i,]$vorgang)
+    rawData[i,]$vorgangNoFst = getVorgangNoFst(rawData[i,]$vorgang)
   }
 }
 
@@ -123,15 +128,17 @@ koi = data.frame(
 rm(list=c("rawData"))
 
 
-# accounts
+# accounts in general
 accounts = data.frame(
   vorgangNoFst = unique(doi$vorgangNoFst),
   actual = NA,
-  customer = NA)
+  customer = NA,
+  vorgang = NA)
 
 for (i in 1:length(accounts$vorgangNoFst)) {
   accounts[i,]$actual = sum(na.omit(subset(
     doi, accounts[i,]$vorgangNoFst == doi$vorgangNoFst)$fragActual))
+  accounts[i,]$vorgang = paste0(unique(doi$vorgang[which(accounts[i,]$vorgangNoFst == doi$vorgangNoFst)])[1], "")
 }
 
 accounts$customer[which(isAudiVorgangNoFst(accounts$vorgangNoFst))] =     "Audi"
@@ -141,3 +148,37 @@ accounts$customer[which(isInternVorgangNoFst(accounts$vorgangNoFst))] =   "GB L"
 
 
 accounts$rank = dim(accounts)[1] - rank(accounts$actual, ties.method="max") + 1
+
+accounts = sort(accounts, f= ~ -actual +customer, decreasing=TRUE)
+# accounts = accounts[order(-accounts[,3]),]
+
+
+
+# accounts in detail
+detailedAccounts = data.frame(
+  vorgangNo = unique(doi$vorgangNo),
+  vorgangNoFst = NA,
+  actual = NA,
+  customer = NA,
+  vorgang = NA)
+
+for (i in 1:length(detailedAccounts$vorgangNo)) {
+  detailedAccounts[i,]$actual = sum(na.omit(subset(
+    doi, detailedAccounts[i,]$vorgangNo == doi$vorgangNo)$fragActual))
+  detailedAccounts[i,]$vorgangNoFst = getVorgangNoFst(detailedAccounts[i,]$vorgangNo)
+  detailedAccounts[i,]$vorgang = paste0(unique(doi$vorgang[which(detailedAccounts[i,]$vorgangNo == doi$vorgangNo)])[1], "")
+}
+
+detailedAccounts$customer[which(isAudiVorgangNoFst(detailedAccounts$vorgangNoFst))] =     "Audi"
+detailedAccounts$customer[which(isDaimlerVorgangNoFst(detailedAccounts$vorgangNoFst))] =  "Daimler"
+detailedAccounts$customer[which(isHrsVorgangNoFst(detailedAccounts$vorgangNoFst))] =      "HRS"
+detailedAccounts$customer[which(isInternVorgangNoFst(detailedAccounts$vorgangNoFst))] =   "GB L"
+
+
+detailedAccounts$rank = dim(accounts)[1] - rank(accounts$actual, ties.method="max") + 1
+
+detailedAccounts = sort(detailedAccounts, f= ~ -actual +customer, decreasing=TRUE)
+# detailedAccounts = detailedAccounts[order(-detailedAccounts[,3]),]
+
+
+

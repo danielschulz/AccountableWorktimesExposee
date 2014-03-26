@@ -103,3 +103,6 @@ sum(subset(doi, (is.na(doi$benefitingCustomer) & is.na(doi$investmentFor) & "Url
 
 print("Sum all Reisezeiten")
 sum(subset(doi, "Reisezeit" == doi$baustein)$fragActual)
+
+View(sort(accounts, f= ~ -actual +customer, decreasing=TRUE))
+# View(accounts[order(-accounts[,3]),])
