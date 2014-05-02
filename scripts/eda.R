@@ -111,3 +111,11 @@ View(sort(accounts, f= ~ -actual +customer, decreasing=TRUE))
 print("Internal work")
 View(subset(doi, is.na(doi$benefitingCustomer) & !is.na(doi$fragActual) & FALSE == doi$holiday & is.na(doi$investmentFor)))
 sum(subset(doi, is.na(doi$benefitingCustomer) & !is.na(doi$fragActual) & FALSE == doi$holiday & is.na(doi$investmentFor))$fragActual)
+
+
+print("not benefiting customer work times")
+notBenefitingCustomerWorkTimes = subset(doi, doi$isWorkDay & is.na(doi$benefitingCustomer))
+sum(na.omit(notBenefitingCustomerWorkTimes$fragActual))
+
+plot(bausteinAccounts$actual ~ bausteinAccounts$baustein)
+plot(accounts$actual ~ accounts$vorgang)

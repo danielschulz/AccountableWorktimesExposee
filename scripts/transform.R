@@ -152,6 +152,7 @@ accounts$customer[which(isInternVorgangNoFst(accounts$vorgangNoFst))] =   "GB L"
 
 accounts$rank = dim(accounts)[1] - rank(accounts$actual, ties.method="max") + 1
 
+accounts = accounts[which(accounts$actual != 0),]
 accounts = sort(accounts, f= ~ -actual +customer, decreasing=TRUE)
 # accounts = accounts[order(-accounts[,3]),]
 
@@ -171,6 +172,9 @@ for (i in 1:length(detailedAccounts$vorgangNo)) {
   detailedAccounts[i,]$vorgangNoFst = getVorgangNoFst(detailedAccounts[i,]$vorgangNo)
   detailedAccounts[i,]$vorgang = paste0(unique(doi$vorgang[which(detailedAccounts[i,]$vorgangNo == doi$vorgangNo)])[1], "")
 }
+
+detailedAccounts = detailedAccounts[which(detailedAccounts$actual != 0),]
+
 
 detailedAccounts$customer[which(isAudiVorgangNoFst(detailedAccounts$vorgangNoFst))] =     "Audi"
 detailedAccounts$customer[which(isDaimlerVorgangNoFst(detailedAccounts$vorgangNoFst))] =  "Daimler"
