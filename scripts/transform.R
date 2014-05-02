@@ -21,7 +21,10 @@ for (i in 1:length(rawData$vorgang)) {
     curWeekday = rawData[i,]$weekday
     
   } else {
-    rawData[i,]$date = format(curDate, DATE_FORMAT)
+    if (!is.na(curDate)) {
+      rawData[i,]$date = format(curDate, DATE_FORMAT)
+    }
+    
     rawData[i,]$nominal = curNominal
     rawData[i,]$weekday = curWeekday
   }
@@ -175,10 +178,19 @@ detailedAccounts$customer[which(isHrsVorgangNoFst(detailedAccounts$vorgangNoFst)
 detailedAccounts$customer[which(isInternVorgangNoFst(detailedAccounts$vorgangNoFst))] =   "GB L"
 
 
-detailedAccounts$rank = dim(accounts)[1] - rank(accounts$actual, ties.method="max") + 1
+detailedAccounts$rank = dim(detailedAccounts)[1] - rank(detailedAccounts$actual, ties.method="max") + 1
 
 detailedAccounts = sort(detailedAccounts, f= ~ -actual +customer, decreasing=TRUE)
 # detailedAccounts = detailedAccounts[order(-detailedAccounts[,3]),]
 
 
+bausteinAccounts = data.frame(
+  baustein = unique(na.omit(doi$baustein)),
+  actual = NA)
 
+for (i in 1:length(bausteinAccounts$baustein)) {
+  bausteinAccounts[i,]$actual = sum(na.omit(subset(
+    doi, bausteinAccounts[i,]$baustein == doi$baustein)$fragActual))
+}
+
+bausteinAccounts = bausteinAccounts[which(bausteinAccounts$actual != 0),]

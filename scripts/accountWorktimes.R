@@ -1,6 +1,6 @@
 
 rm(list = ls()[!(ls() %in% PERSISTENT_CONSTANTS)])
-YEAR_OF_INTEREST = 2013
+YEAR_OF_INTEREST = 2014
 
 source("../scripts/setup.R")
 source("../scripts/loadDataFrame.R")

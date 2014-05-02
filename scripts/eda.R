@@ -106,3 +106,8 @@ sum(subset(doi, "Reisezeit" == doi$baustein)$fragActual)
 
 View(sort(accounts, f= ~ -actual +customer, decreasing=TRUE))
 # View(accounts[order(-accounts[,3]),])
+
+
+print("Internal work")
+View(subset(doi, is.na(doi$benefitingCustomer) & !is.na(doi$fragActual) & FALSE == doi$holiday & is.na(doi$investmentFor)))
+sum(subset(doi, is.na(doi$benefitingCustomer) & !is.na(doi$fragActual) & FALSE == doi$holiday & is.na(doi$investmentFor))$fragActual)
